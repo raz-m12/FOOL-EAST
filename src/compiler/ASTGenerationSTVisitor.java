@@ -90,7 +90,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (print) printVarAndProdName(c);
 		List<ParNode> parList = new ArrayList<>();
 		for (int i = 1; i < c.type().size(); i++) {
-			var parNode = new ParNode(c.ID().toString(), visit(c.type(i)));
+			var parNode = new ParNode(c.ID(i).getText(), visit(c.type(i)));
 			parNode.setLine(c.ID(i).getSymbol().getLine());
 			parList.add(parNode);
 		}

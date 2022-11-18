@@ -8,7 +8,7 @@ import compiler.lib.*;
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void> {
 	
 	int stErrors=0;
-	private List<Map<String, STentry>> symTable = new ArrayList<>();
+	private final List<Map<String, STentry>> symTable = new ArrayList<>();
 	private int nestingLevel=0;
 	//livello ambiente con dichiarazioni piu' esterno e' 0 (prima posizione ArrayList) invece che 1 (slides)
 	//il "fronte" della lista di tabelle e' symTable.get(nestingLevel)
@@ -114,11 +114,23 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void> {
 		nestingLevel++;
 		Map<String, STentry> hmn = new HashMap<>();
 		symTable.add(hmn);
+		for (var parNode: n.parlist) {
+			STentry par = new STentry(nestingLevel);
+			if (hmn.put(parNode.id, par) != null) {
+				System.out.println("Par id " + parNode.id + " at line " + parNode.getLine() + " already declared");
+				stErrors++;
+			}
+		}
 		// for (ParNode par : n.parlist) visit(par);
 		for (Node dec : n.declist) visit(dec);
 		visit(n.exp);
 		//rimuovere la hashmap corrente poiche' esco dallo scope               
 		symTable.remove(nestingLevel--);
+		return null;
+	}
+	@Override
+	public Void visitNode(ParNode n) {
+
 		return null;
 	}
 
@@ -135,7 +147,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void> {
 		if (print) printNode(n);
 		STentry entry = stLookup(n.id);
 		if (entry == null) {
-			System.out.println("Var id " + n.id + " at line "+ n.getLine() + " not declared");
+			System.out.println("Var or Par id " + n.id + " at line "+ n.getLine() + " not declared");
 			stErrors++;
 		} else 
 			n.entry = entry;
@@ -151,7 +163,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void> {
 			stErrors++;
 		} else 
 			n.entry = entry;
-		// for (Node arg : n.arglist) visit(arg);
+		for (Node arg : n.arglist) visit(arg);
 		return null;
 	}
 }

@@ -99,7 +99,7 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void> {
 	public Void visitNode(FunNode n) {
 		printNode(n,n.id);
 		visit(n.retType);
-		// for (ParNode par : n.parlist) visit(par);
+		for (ParNode par : n.parlist) visit(par);
 		for (Node dec : n.declist) visit(dec);
 		visit(n.exp);
 		return null;
@@ -116,7 +116,14 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void> {
 	public Void visitNode(CallNode n) {
 		printNode(n,n.id);
 		if(n.entry != null) visit(n.entry);
-		// for (Node arg : n.arglist) visit(arg);
+		for (Node arg : n.arglist) visit(arg);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(ParNode n) {
+		printNode(n,n.id);
+		visit(n.type);
 		return null;
 	}
 
