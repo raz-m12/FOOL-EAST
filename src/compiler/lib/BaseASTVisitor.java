@@ -50,4 +50,5 @@ public class BaseASTVisitor<S> {
 	public S visitNode(FunNode n) {throw new UnimplException();}
 	public S visitNode(IdNode n) {throw new UnimplException();}
 	public S visitNode(CallNode n) {throw new UnimplException();}
+	public S visitNode(ParNode n) {throw new UnimplException();}
 }

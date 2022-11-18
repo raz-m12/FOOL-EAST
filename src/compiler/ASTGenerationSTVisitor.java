@@ -88,11 +88,18 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	@Override
 	public Node visitFundec(FundecContext c) {
 		if (print) printVarAndProdName(c);
+		List<ParNode> parList = new ArrayList<>();
+		for (int i = 1; i < c.type().size(); i++) {
+			var parNode = new ParNode(c.ID().toString(), visit(c.type(i)));
+			parNode.setLine(c.ID(i).getSymbol().getLine());
+			parList.add(parNode);
+		}
+
 		List<Node> decList = new ArrayList<>();
 		for (DecContext dec : c.dec()) decList.add(visit(dec));
 		Node n = null;
 		if (c.ID().size()>0) { //non-incomplete ST
-			n = new FunNode(c.ID(0).getText(), visit(c.type(0)), decList, visit(c.exp()));
+			n = new FunNode(c.ID(0).getText(), visit(c.type(0)), parList, decList, visit(c.exp()));
 			n.setLine(c.FUN().getSymbol().getLine());
 		}
 		return n;
@@ -161,7 +168,11 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	@Override
 	public Node visitCall(CallContext c) {
 		if (print) printVarAndProdName(c);
-		Node n = new CallNode(c.ID().getText());
+
+		List<Node> argList = new ArrayList<>();
+		for (ExpContext par : c.exp()) argList.add(visit(par));
+
+		Node n = new CallNode(c.ID().getText(), argList);
 		n.setLine(c.ID().getSymbol().getLine());
 		return n;
 	}
