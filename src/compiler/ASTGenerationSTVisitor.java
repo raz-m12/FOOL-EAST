@@ -1,15 +1,13 @@
 package compiler;
 
+import java.util.*;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import compiler.AST.*;
 import compiler.FOOLParser.*;
 import compiler.lib.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static compiler.lib.FOOLlib.*;
 
 public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
@@ -44,13 +42,11 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 	@Override
-	public Node visitLetInProg(LetInProgContext c) { 
+	public Node visitLetInProg(LetInProgContext c) {
 		if (print) printVarAndProdName(c);
-		List<Node> decList = new ArrayList<Node>();
-
-		for (DecContext dec : c.dec()) decList.add(visit(dec));
-
-		return new ProgLetInNode(decList, visit(c.exp()));
+		List<Node> declist = new ArrayList<>();
+		for (DecContext dec : c.dec()) declist.add(visit(dec));
+		return new ProgLetInNode(declist, visit(c.exp()));
 	}
 
 	@Override
@@ -83,10 +79,10 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 
 		Node n = null;
 		if (c.ID()!=null) { //non-incomplete ST
-			n = new VarNode(c.ID().getText(), visit(c.type()), visit(c.exp())); //production has a single token with name ID
-			n.setLine(c.ID().getSymbol().getLine());
+			n = new VarNode(c.ID().getText(), visit(c.type()), visit(c.exp()));
+			n.setLine(c.VAR().getSymbol().getLine());
 		}
-		return n;
+        return n;
 	}
 
 	@Override
@@ -170,5 +166,3 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		return n;
 	}
 }
-
-//n.setLine(c.ID().getSymbol().getLine());

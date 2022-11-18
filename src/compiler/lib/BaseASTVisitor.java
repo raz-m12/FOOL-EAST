@@ -1,8 +1,6 @@
 package compiler.lib;
 
 import compiler.AST.*;
-import compiler.STentry;
-
 import static compiler.lib.FOOLlib.*;
 
 public class BaseASTVisitor<S> {

@@ -1,14 +1,9 @@
 package compiler;
 
 import java.util.*;
-import java.util.Map;
 
 import compiler.AST.*;
 import compiler.lib.*;
-import compiler.lib.Node;
-
-// Top down - creo il symbol table e decoro l'albero di natale
-// Quando vado bottom-down devo verificare gli errori
 
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void> {
 	
@@ -80,60 +75,49 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void> {
 		return null;
 	}
 
-//
 	@Override
 	public Void visitNode(ProgLetInNode n) {
 		if (print) printNode(n);
 		Map<String, STentry> hm = new HashMap<>();
 		symTable.add(hm);
-
-		for (Node dec : n.declist) visit(dec);
+	    for (Node dec : n.declist) visit(dec);
 		visit(n.exp);
-
 		symTable.remove(0);
 		return null;
 	}
 
 	@Override
 	public Void visitNode(VarNode n) {
-		if (print) printNode(n,n.id);
+		if (print) printNode(n);
 		visit(n.exp);
-		// se lo aggiungo prima di visit posso fare e.g. int x = x + 5;
 		Map<String, STentry> hm = symTable.get(nestingLevel);
-
 		STentry entry = new STentry(nestingLevel);
-		// se true, vuol dire che c'era già-
-		if(hm.put(n.id, entry) != null) {
+		//inserimento di ID nella symtable
+		if (hm.put(n.id, entry) != null) {
 			System.out.println("Var id " + n.id + " at line "+ n.getLine() +" already declared");
 			stErrors++;
 		}
-
 		return null;
 	}
 
 	@Override
 	public Void visitNode(FunNode n) {
-		if (print) printNode(n,n.id);
-
+		if (print) printNode(n);
 		Map<String, STentry> hm = symTable.get(nestingLevel);
-
 		STentry entry = new STentry(nestingLevel);
-		// se true, vuol dire che c'era già-
-		if(hm.put(n.id, entry) != null) {
+		//inserimento di ID nella symtable
+		if (hm.put(n.id, entry) != null) {
 			System.out.println("Fun id " + n.id + " at line "+ n.getLine() +" already declared");
 			stErrors++;
-		}
-
-		// entro in un nuovo scope
+		} 
+		//creare una nuova hashmap per la symTable
 		nestingLevel++;
 		Map<String, STentry> hmn = new HashMap<>();
 		symTable.add(hmn);
-
-
 		// for (ParNode par : n.parlist) visit(par);
 		for (Node dec : n.declist) visit(dec);
 		visit(n.exp);
-
+		//rimuovere la hashmap corrente poiche' esco dallo scope               
 		symTable.remove(nestingLevel--);
 		return null;
 	}
@@ -141,9 +125,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void> {
 	private STentry stLookup(String id) {
 		int j = nestingLevel;
 		STentry entry = null;
-		while(j >= nestingLevel && entry == null) {
-			entry = symTable.get(j--).get(id);
-		}
+		while (j >= 0 && entry == null) 
+			entry = symTable.get(j--).get(id);	
 		return entry;
 	}
 	
@@ -151,12 +134,11 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void> {
 	public Void visitNode(IdNode n) {
 		if (print) printNode(n);
 		STentry entry = stLookup(n.id);
-		if(entry == null) {
-			System.out.println("Var id " + n.id + " at line "+ n.getLine() +" not declared");
+		if (entry == null) {
+			System.out.println("Var id " + n.id + " at line "+ n.getLine() + " not declared");
 			stErrors++;
-		} else {
+		} else 
 			n.entry = entry;
-		}
 		return null;
 	}
 
@@ -164,27 +146,12 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void> {
 	public Void visitNode(CallNode n) {
 		if (print) printNode(n);
 		STentry entry = stLookup(n.id);
-		if(entry == null) {
-			System.out.println("Fun id " + n.id + " at line "+ n.getLine() +" not declared");
+		if (entry == null) {
+			System.out.println("Fun id " + n.id + " at line "+ n.getLine() + " not declared");
 			stErrors++;
-		} else {
+		} else 
 			n.entry = entry;
-		}
 		// for (Node arg : n.arglist) visit(arg);
 		return null;
 	}
 }
-
-//		Map<String, STentry> hm = new HashMap<>();
-//		symTable.add(hm);
-
-//		STentry entry = new STentry(nestingLevel);
-//		hm.put(n.id, entry)
-
-//			System.out.println("Var id " + n.id + " at line "+ n.getLine() +" already declared");
-
-//	int j = nestingLevel;
-
-//	STentry entry = null;
-
-//		entry = symTable.get(j--).get(id);

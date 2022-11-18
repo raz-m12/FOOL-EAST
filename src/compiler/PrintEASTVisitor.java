@@ -13,7 +13,7 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void> {
 		visit(n.exp);
 		return null;
 	}
-	
+
 	@Override
 	public Void visitNode(IntNode n) {
 		printNode(n, n.val.toString());
@@ -27,7 +27,7 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void> {
 		visit(n.right);
 		return null;
 	}
-	
+
 	@Override
 	public Void visitNode(TimesNode n) {
 		printNode(n);
@@ -43,13 +43,12 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void> {
 		visit(n.right);
 		return null;
 	}
-	
+
 	@Override
 	public Void visitNode(BoolNode n) {
 		printNode(n, n.val.toString());
 		return null;
 	}
-
 
 	@Override
 	public Void visitNode(IfNode n) {
@@ -59,7 +58,7 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void> {
 		visit(n.el);
 		return null;
 	}
-	
+
 	@Override
 	public Void visitNode(PrintNode n) {
 		printNode(n);
@@ -67,7 +66,7 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void> {
 		return null;
 	}
 
-//	
+//
 	@Override
 	public Void visitNode(ProgLetInNode n) {
 		printNode(n);
@@ -105,12 +104,11 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void> {
 		visit(n.exp);
 		return null;
 	}
-	
+
 	@Override
 	public Void visitNode(IdNode n) {
 		printNode(n,n.id);
-		if(n.entry != null) visit(n.entry);
-		// visit(n.entry);
+		if (n.entry!=null) visit(n.entry);
 		return null;
 	}
 

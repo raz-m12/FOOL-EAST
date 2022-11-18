@@ -9,8 +9,7 @@ public int lexicalErrors=0;
  *------------------------------------------------------------------*/
   
 prog  : progbody EOF ;
-
-// Il + è una espressione regole. Vuol dire repettuto una o più volte
+     
 progbody : LET dec+ IN exp SEMIC  #letInProg
          | exp SEMIC              #noDecProg
          ;
@@ -74,6 +73,6 @@ WHITESP  : ( '\t' | ' ' | '\r' | '\n' )+    -> channel(HIDDEN) ;
 
 COMMENT : '/*' (.)*? '*/' -> channel(HIDDEN) ;
  
-ERR   	 : . { System.out.println("Invalid char: "+ getText()); lexicalErrors++; } -> channel(HIDDEN); 
+ERR   	 : . { System.out.println("Invalid char "+getText()+" at line "+getLine()); lexicalErrors++; } -> channel(HIDDEN); 
 
 
